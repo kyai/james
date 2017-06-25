@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Snake</title>
+<style type="text/css">
+html,body{margin: 0;padding: 0}
+
+#table td{width: 5px;height: 5px;font-size: 0;line-height: 0;border-color: #ccc}
+#table td.p{background: #000}
+#table td.l{background: #555}
+#table td.d{background: #fff}
+#table td.f{background: red}
+</style>
+<!-- <script type="text/javascript" src="jquery.js"></script> -->
+</head>
+<body>
+<table id="table" cellpadding="0" cellspacing="0" border="1"></table>
+</body>
+<script type="text/javascript">
+function draw_table(r,c){
+    var html = '';
+    for(var i = 0; i < r; i++){
+        html += '<tr>';
+        for(var j = 0; j < c; j++){
+            html += '<td id="'+i+'_'+j+'" class="d"></td>';
+        }
+        html += '</tr>';
+    }
+    document.getElementById('table').innerHTML = html;
+}
+
+function food(){
+    var a = document.getElementsByClassName('d');
+    var i = parseInt(Math.random()*(a.length)+1);
+    var id = a[i-1]['id'];
+    f = id.split('_');
+    document.getElementById(id).className = 'f';
+}
+
+window.onkeydown = function(e){
+    var keynum = window.event ? e.keyCode : e.which;
+    run(keynum);
+}
+
+var p = [50,50];
+var l = [p];
+var f = [];
+
+function run(key){
+    key = parseInt(key);
+    var pp = p.concat();
+    switch(key){
+        // up
+        case 38: p[0]--; break;
+        // down
+        case 40: p[0]++; break;
+        // left
+        case 37: p[1]--; break;
+        // right
+        case 39: p[1]++; break;
+        default: return;
+    }
+
+    if(p[0]==f[0] && p[1]==f[1]){
+        l.push(f);
+    }
+
+    Snake.point(l[0]);
+
+    if(l.length == 1){
+        Snake.off(pp);
+    }else{
+        Snake.on(pp);
+        Snake.off(l[l.length-1]);
+    }
+}
+
+var Snake = {
+    point: function(a){
+        document.getElementById(a[0]+'_'+a[1]).className = 'p';
+    },
+    on: function(a){
+        document.getElementById(a[0]+'_'+a[1]).className = 'l';
+    },
+    off: function(a){
+        document.getElementById(a[0]+'_'+a[1]).className = 'd';
+    }
+}
+
+
+window.onload = function(){
+    draw_table(100,100);
+    food();
+    Snake.point(p);
+}
+</script>
+</html>
