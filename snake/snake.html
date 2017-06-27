@@ -4,8 +4,8 @@
 <title>Snake</title>
 <style type="text/css">
 html,body{margin: 0;padding: 0}
-
-#table td{width: 5px;height: 5px;font-size: 0;line-height: 0;border-color: #ccc}
+#table{border-color: #fafafa}
+#table td{width: 10px;height: 10px;font-size: 0;line-height: 0;border-color: #fafafa}
 #table td.p{background: #000}
 #table td.l{background: #555}
 #table td.d{background: #fff}
@@ -37,18 +37,13 @@ function food(){
     document.getElementById(id).className = 'f';
 }
 
-window.onkeydown = function(e){
-    var keynum = window.event ? e.keyCode : e.which;
-    run(keynum);
-}
-
-var p = [50,50];
+var p = [5,5];
 var l = [p];
 var f = [];
-
 function run(key){
     key = parseInt(key);
     var pp = p.concat();
+    var ppp = [];
     switch(key){
         // up
         case 38: p[0]--; break;
@@ -62,17 +57,20 @@ function run(key){
     }
 
     if(p[0]==f[0] && p[1]==f[1]){
-        l.push(f);
-    }
-
-    Snake.point(l[0]);
-
-    if(l.length == 1){
-        Snake.off(pp);
+        food();
     }else{
-        Snake.on(pp);
-        Snake.off(l[l.length-1]);
+        ppp = l.pop();
     }
+    
+    l.unshift(p.concat());
+
+    if(l.length==1){
+        ppp = pp;
+    }
+    
+    Snake.point(p);
+    Snake.on(pp);
+    if(ppp.length>0) Snake.off(ppp);
 }
 
 var Snake = {
@@ -87,11 +85,15 @@ var Snake = {
     }
 }
 
-
 window.onload = function(){
-    draw_table(100,100);
+    draw_table(50,50);
     food();
     Snake.point(p);
+}
+
+window.onkeydown = function(e){
+    var keynum = window.event ? e.keyCode : e.which;
+    run(keynum);
 }
 </script>
 </html>
