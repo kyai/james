@@ -28,6 +28,14 @@ function draw_table(r,c){
     document.getElementById('table').innerHTML = html;
 }
 
+function start(){
+    if(timer) window.clearInterval(timer);
+    draw_table(50,50);
+    p = [5,5];l = [p];
+    food();
+    Snake.point(p);
+}
+
 function food(){
     var a = document.getElementsByClassName('d');
     var i = parseInt(Math.random()*(a.length)+1);
@@ -36,9 +44,13 @@ function food(){
     document.getElementById(id).className = 'f';
 }
 
-var p = [5,5];
-var l = [p];
-var f = [];
+function lose(){
+    alert('Game over');
+    start();
+}
+
+var p = [], l = [], f = [], k = 0, timer;
+
 function run(key){
     key = parseInt(key);
     var pp = p.concat();
@@ -55,6 +67,13 @@ function run(key){
         default: return;
     }
 
+    // lose
+    var td = document.getElementById(p[0]+'_'+p[1]);
+    if(!td || (td.className != 'd' && td.className != 'f')){
+        lose();return;
+    }
+
+    // food
     if(p[0]==f[0] && p[1]==f[1]){
         food();
     }else{
@@ -85,14 +104,19 @@ var Snake = {
 }
 
 window.onload = function(){
-    draw_table(50,50);
-    food();
-    Snake.point(p);
+    start();
 }
 
 window.onkeydown = function(e){
-    var keynum = window.event ? e.keyCode : e.which;
-    run(keynum);
+    k = window.event ? e.keyCode : e.which;
+    run(k);
+    if(timer) window.clearInterval(timer);
+}
+
+window.onkeyup = function(e){
+    timer = window.setInterval(function(){
+        run(k);
+    },500);
 }
 </script>
 </html>
