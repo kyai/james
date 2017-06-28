@@ -4,16 +4,18 @@
 <title>Snake</title>
 <style type="text/css">
 html,body{margin: 0;padding: 0}
-#table{border-color: #fafafa}
+#table{border-color: #fafafa;float: left;}
 #table td{width: 10px;height: 10px;font-size: 0;line-height: 0;border-color: #fafafa}
 #table td.p{background: #000}
-#table td.l{background: #555}
+#table td.l{background: #999}
 #table td.d{background: #fff}
 #table td.f{background: red}
+#view{float: left;margin-left: 30px}
 </style>
 </head>
 <body>
 <table id="table" cellpadding="0" cellspacing="0" border="1"></table>
+<div id="view">Score : <span id="score"></span><br>Level : <span id="level"></span></div>
 </body>
 <script type="text/javascript">
 function draw_table(r,c){
@@ -34,6 +36,9 @@ function start(){
     p = [5,5];l = [p];
     food();
     Snake.point(p);
+    speed = 500;
+    document.getElementById('score').innerHTML = score = 0;
+    document.getElementById('level').innerHTML = level = 1;
 }
 
 function food(){
@@ -45,11 +50,11 @@ function food(){
 }
 
 function lose(){
-    alert('Game over');
+    alert('Game over -- Score : '+score);
     start();
 }
 
-var p = [], l = [], f = [], k = 0, timer;
+var p = [], l = [], f = [], k = 0, speed, timer, score, level;
 
 function run(key){
     key = parseInt(key);
@@ -76,6 +81,11 @@ function run(key){
     // food
     if(p[0]==f[0] && p[1]==f[1]){
         food();
+        score++;
+        level = parseInt(score/10) + 1;
+        speed = 550 - level * 50;speed = speed < 50 ? 50 : speed;
+        document.getElementById('score').innerHTML = score;
+        document.getElementById('level').innerHTML = level;
     }else{
         ppp = l.pop();
     }
@@ -114,9 +124,10 @@ window.onkeydown = function(e){
 }
 
 window.onkeyup = function(e){
+    if(timer) window.clearInterval(timer);
     timer = window.setInterval(function(){
         run(k);
-    },500);
+    },speed);
 }
 </script>
 </html>
