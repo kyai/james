@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sudoku</title>
+<style type="text/css">
+#table{margin: 0 auto;border-color: #ccc}
+#table td{width: 50px;height: 50px;text-align: center;vertical-align: middle;}
+#table tr:nth-child(3), #table tr:nth-child(6){border-bottom-color: #000}
+#table tr:nth-child(4), #table tr:nth-child(7){border-top-color: #000}
+#table tr td:nth-child(3), #table tr td:nth-child(6){border-right-color: #000}
+#table tr td:nth-child(4), #table tr td:nth-child(7){border-left-color: #000}
+#table td input{width: 30px;height: 30px;text-align: center;display: none;}
+#table td label{}
+</style>
+<script type="text/javascript" src="../common/jquery.js"></script>
+<script type="text/javascript" src="../common/vue.min.js"></script>
+</head>
+<body>
+<table id="table" cellpadding="0" cellspacing="0" border="1">
+    <tr v-for="r in 9">
+        <td v-for="c in 9">
+            <input>
+            <label v-if="list[r-1]&&list[r-1][c-1]">{{list[r-1][c-1]}}</label>
+        </td>
+    </tr>
+</table>
+</body>
+<script type="text/javascript">
+window.onload = function(){
+
+    Sudoku = new Vue({
+        el: '#table',
+        data: {
+            list: []
+        },
+        methods: {
+            // 
+        }
+    })
+
+    init()
+}
+
+function init(){
+    var list = []
+    for(var i = 0; i < 9; i ++){
+        list[i] = []
+        for(var j = 0; j < 9; j ++){
+            list[i][j] = 1
+        }
+    }
+    Sudoku.list = list
+
+    $('#table td').click(function(){
+        $(this).children('label').hide()
+        $(this).children('input').show().val($(this).children('label').html()).focus().select()
+    })
+    $('#table td input').blur(function(){
+        $(this).siblings('label').show().html($(this).val())
+        $(this).hide()
+    })
+}
+
+// var Input = {
+//     focus: function(dom){
+//         alert(dom)
+//     },
+//     leave: function(dom){
+//         console.log(dom)
+//     }
+// }
+</script>
+</html>
