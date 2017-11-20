@@ -1,2 +1,2 @@
 # james
-javascript games
+Javascript's Games
