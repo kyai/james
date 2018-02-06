@@ -174,6 +174,7 @@ var F = {
             dataType: 'json',
             beforeSend:function(request){
                 // request.setRequestHeader("Authorization", token)
+                layer.load()
             },
             success: function (data) {
                 console.log(data)
@@ -181,6 +182,9 @@ var F = {
 
                 App.list = data.data.petsOnSale
                 App.sale = data.data.totalCount
+            },
+            complete: function(){
+                layer.closeAll('loading')
             }
         })
     },
