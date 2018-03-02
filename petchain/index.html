@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>莱茨助手</title>
+<script type="text/javascript" src="static/jquery.min.js"></script>
+<script type="text/javascript" src="static/vue.min.js"></script>
+<script type="text/javascript" src="config.js"></script>
+<style type="text/css">
+*{vertical-align: middle;}
+html,body{margin: 0;padding: 0;}
+#app{max-width: 600px;margin: 0 auto;padding: 0 10px;position: relative;overflow: hidden;}
+
+.guide-bg{width: 100%;position: fixed;top: 0;left: 0;}
+.guide{width: 100%;max-width: 600px;height: 38px;position: relative;margin: 0 auto;line-height: 38px;
+    background: #fff;border-bottom: solid 1px #000;
+}
+.guide .total{}
+.guide .vcode{float: right;display: inline-block;}
+.guide .vcode img{width: auto;height: 34px;}
+.guide .vcode input{line-height: 30px;padding: 0;margin: 0}
+
+table{width: 100%;border-collapse: collapse;margin-top: 36px;}
+table tr{border-bottom: solid 1px #ccc;}
+table tr:hover{background: #ccc}
+table td{text-align: center;line-height: 30px;}
+table td.l{text-align: left;}
+table td.r{text-align: right;}
+
+.degree{display: inline-block;background: red;padding: 0 5px;line-height: 20px;color: #fff;font-size: 14px;}
+.degree_0{background-color: #bbbbbb}
+.degree_1{background-color: #ff6666}
+.degree_2{background-color: #339999}
+.degree_3{background-color: #cc4125}
+.degree_4{background-color: #e69138}
+.degree_5{background-color: red}
+</style>
+</head>
+<body>
+    <div id="app">
+        <div class="guide-bg">
+        <div class="guide">
+            <span class="total">在售:{{sale}}</span>
+            <span class="vcode">
+                <img :src="'data:image/jpeg;base64,'+vimg">
+                <input v-model="vipt">
+            </span>
+        </div>
+        </div>
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr v-for="v in list">
+                <td class="l"><span :class="'degree degree_'+v.rareDegree">{{v.rareDegree | RareDegree}}</span></td>
+                <td>{{v.generation}} 代</td>
+                <td class="r">{{v.amount}} 微</td>
+                <td class="r">
+                    <a href="javascript:;">{{v.id}}</a>
+                    <button @click="F.buy(v)">购买</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+<script type="text/javascript">
+$(function(){
+    App = new Vue({
+        el: '#app',
+        data: {
+            list: [],
+            sale: 0,
+            vimg: '',
+            seed: '',
+            vipt: ''
+        },
+        methods: {
+            //
+        },
+        filters: {
+            RareDegree: function(v){
+                var o = {
+                    '0': '普通',
+                    '1': '稀有',
+                    '2': '卓越',
+                    '3': '史诗',
+                    '4': '神话',
+                    '5': '传说'
+                }
+                return o[v] || ''
+            },
+            Generation: function(v){}
+        }
+    })
+
+    F.writeCookie()
+
+    F.gen()
+    F.get()
+})
+
+var F = {
+    // 获取数据
+    get: function(){
+        var rdata = {
+            'pageNo':           1,
+            'pageSize':         20,
+            'querySortType':    'CREATETIME_DESC',
+            'petIds':           [],
+            'lastAmount':       null,
+            'lastRareDegree':   null,
+            'requestId':        1519959290366,
+            'appId':            1,
+            'tpl':              '',
+            'timeStamp':        null,
+            'nounce':           null,
+            'token':            null
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/data/market/queryPetsOnSale',
+            contentType: 'application/json',
+            data: JSON.stringify(rdata),
+            dataType: 'json',
+            beforeSend:function(request){
+                // request.setRequestHeader("Authorization", token)
+            },
+            success: function (data) {
+                console.log(data)
+                if(data.errorNo != '00') return console.log('request error')
+
+                App.list = data.data.petsOnSale
+                App.sale = data.data.totalCount
+            }
+        })
+    },
+    // 验证码
+    gen: function(){
+        var rdata = {
+            'requestId':    new Date().getTime(),
+            'appId':        1,
+            'tpl':          '',
+            'timeStamp':    null,
+            'nounce':       null,
+            'token':        null
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/data/captcha/gen',
+            contentType: 'application/json',
+            data: JSON.stringify(rdata),
+            dataType: 'json',
+            beforeSend:function(request){
+                // request.setRequestHeader("Authorization", token)
+            },
+            success: function (data) {
+                console.log(data)
+                if(data.errorNo != '00') return console.log('request error')
+
+                App.vimg = data.data.img
+                App.seed = data.data.seed
+                App.vipt = ''
+            }
+        })
+    },
+    // 购买
+    buy: function(v){
+        var rdata = {
+            'petId':        v.petId,
+            'amount':       v.amount,
+            'seed':         App.seed,
+            'captcha':      App.vipt,
+            'validCode':    '',
+            'requestId':    new Date().getTime(),
+            'appId':        1,
+            'tpl':          '',
+            'timeStamp':    null,
+            'nounce':       null,
+            'token':        null
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/data/txn/create',
+            contentType: 'application/json',
+            data: JSON.stringify(rdata),
+            dataType: 'json',
+            beforeSend:function(request){
+                // request.setRequestHeader("Authorization", token)
+            },
+            success: function (data) {
+                console.log(data)
+                if(data.errorNo != '00') return console.log('request error')
+            },
+            complete: function(){
+                F.gen()
+            }
+        })
+    },
+    // 从配置写入cookie
+    writeCookie: function(){
+        var cookies = $.trim(Config.cookie).split(';')
+        if(!cookies.length) return
+        for(var k in cookies) document.cookie = cookies[k]
+    }
+}
+</script>
+</html>
