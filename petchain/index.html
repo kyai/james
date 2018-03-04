@@ -5,22 +5,35 @@
 <title>莱茨助手</title>
 <script type="text/javascript" src="static/jquery.min.js"></script>
 <script type="text/javascript" src="static/vue.min.js"></script>
+<script type="text/javascript" src="static/layer.js"></script>
 <script type="text/javascript" src="config.js"></script>
 <style type="text/css">
 *{vertical-align: middle;}
 html,body{margin: 0;padding: 0;}
 #app{max-width: 600px;margin: 0 auto;padding: 0 10px;position: relative;overflow: hidden;}
 
-.guide-bg{width: 100%;position: fixed;top: 0;left: 0;}
-.guide{width: 100%;max-width: 600px;height: 38px;position: relative;margin: 0 auto;line-height: 38px;
+.head{width: 100%;position: fixed;top: 0;left: 0;}
+.head>div{width: 100%;max-width: 600px;height: 38px;line-height: 38px;
+    position: relative;margin: 0 auto;
     background: #fff;border-bottom: solid 1px #000;
 }
+
+.guide{}
 .guide .total{}
 .guide .vcode{float: right;display: inline-block;}
 .guide .vcode img{width: auto;height: 34px;}
 .guide .vcode input{line-height: 30px;padding: 0;margin: 0}
 
-table{width: 100%;border-collapse: collapse;margin-top: 36px;}
+.sort .sortby{width: auto;height: 26px;display: inline-block;line-height: 26px;}
+.sort .sortby:after{width: 20px;height: 20px;display: block;content: '';
+    margin: 3px 0;float: right;
+    background-color: #fff;background-size: 20px 20px;background-repeat: no-repeat;
+}
+.sort .sortby.active.ASC:after{background-image: url(/static/sort_up.png);}
+.sort .sortby.active.DESC:after{background-image: url(/static/sort_down.png);}
+.sort button{background: #3385ff;color: #fff;border: 1px solid #2d78f4;}
+
+table{width: 100%;border-collapse: collapse;margin-top: 78px;}
 table tr{border-bottom: solid 1px #ccc;}
 table tr:hover{background: #ccc}
 table td{text-align: center;line-height: 30px;}
@@ -34,22 +47,29 @@ table td.r{text-align: right;}
 .degree_3{background-color: #cc4125}
 .degree_4{background-color: #e69138}
 .degree_5{background-color: red}
+
+.foot{width: 100%;text-align: center;line-height: 50px;font-size: 12px;color: #ccc;}
 </style>
 </head>
 <body>
     <div id="app">
-        <div class="guide-bg">
-        <div class="guide">
-            <span class="total">在售:{{sale}}</span>
-            <span class="vcode">
-                <img :src="'data:image/jpeg;base64,'+vimg">
-                <input v-model="vipt">
-            </span>
-        </div>
+        <div class="head">
+            <div class="guide">
+                <span class="total">在售:{{sale}}</span>
+                <span class="vcode">
+                    <img :src="'data:image/jpeg;base64,'+vimg">
+                    <input v-model="vipt">
+                </span>
+            </div>
+            <div class="sort">
+                <span>排序 - </span>
+                <span v-for="v in sort_name" :class="'sortby '+sort_mode+(v==sort_type?' active':'')" @click="sort_click(v)">{{v | sortname}}</span>
+                <span style="float: right;"><button @click="F.get()">刷新</button></span>
+            </div>
         </div>
         <table cellpadding="0" cellspacing="0" border="0">
             <tr v-for="v in list">
-                <td class="l"><span :class="'degree degree_'+v.rareDegree">{{v.rareDegree | RareDegree}}</span></td>
+                <td class="l"><span :class="'degree degree_'+v.rareDegree">{{v.rareDegree | raredegree}}</span></td>
                 <td>{{v.generation}} 代</td>
                 <td class="r">{{v.amount}} 微</td>
                 <td class="r">
@@ -58,6 +78,7 @@ table td.r{text-align: right;}
                 </td>
             </tr>
         </table>
+        <div class="foot">仅供交流学习使用，禁止用于商业用途。</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -69,13 +90,24 @@ $(function(){
             sale: 0,
             vimg: '',
             seed: '',
-            vipt: ''
+            vipt: '',
+            sort_name: ['RAREDEGREE','AMOUNT','CREATETIME'],
+            sort_type: 'CREATETIME',
+            sort_mode: 'DESC'
         },
         methods: {
-            //
+            sort_click: function(v){
+                if(v == this.sort_type){
+                    this.sort_mode = this.sort_mode == 'ASC' ? 'DESC' : 'ASC'
+                }else{
+                    this.sort_mode = 'DESC'
+                    this.sort_type = v
+                }
+                F.get()
+            }
         },
         filters: {
-            RareDegree: function(v){
+            raredegree: function(v){
                 var o = {
                     '0': '普通',
                     '1': '稀有',
@@ -86,7 +118,15 @@ $(function(){
                 }
                 return o[v] || ''
             },
-            Generation: function(v){}
+            generation: function(v){},
+            sortname: function(v){
+                var o = {
+                    'RAREDEGREE': '稀有度',
+                    'AMOUNT':     '价格',
+                    'CREATETIME': '时间'
+                }
+                return o[v] || ''
+            }
         }
     })
 
@@ -102,7 +142,7 @@ var F = {
         var rdata = {
             'pageNo':           1,
             'pageSize':         20,
-            'querySortType':    'CREATETIME_DESC',
+            'querySortType':    App.sort_type + '_' + App.sort_mode,
             'petIds':           [],
             'lastAmount':       null,
             'lastRareDegree':   null,
@@ -189,7 +229,8 @@ var F = {
             },
             success: function (data) {
                 console.log(data)
-                if(data.errorNo != '00') return console.log('request error')
+                // if(data.errorNo != '00') return console.log('request error')
+                layer.msg(data.errorMsg)
             },
             complete: function(){
                 F.gen()
