@@ -6,7 +6,6 @@
 <script type="text/javascript" src="static/jquery.min.js"></script>
 <script type="text/javascript" src="static/vue.min.js"></script>
 <script type="text/javascript" src="static/layer.js"></script>
-<script type="text/javascript" src="config.js"></script>
 <link rel="stylesheet" type="text/css" href="static/style.css">
 </head>
 <body>
@@ -35,7 +34,7 @@
         </div>
         <div class="foot">莱茨狗 当前在售:{{sale}}<br>仅供交流学习使用，禁止用于商业用途。</div>
     </div>
-    <div class="ctrl">
+    <div class="ctrl" v-if="user.userName">
         <div class="code">
             <img :src="'data:image/jpeg;base64,'+vimg" @click="F.gen()">
             <input v-model="vipt">
@@ -44,10 +43,11 @@
             <img :src="user.headIcon">
             <span>
                 <b>{{user.userName}}&nbsp;&nbsp;&nbsp;${{user.amount}}</b><br>
-                <a href="javascript:;">退出</a>
+                <a href="javascript:;" @click="logout()">退出</a>
             </span>
         </div>
     </div>
+    <button v-else @click="login()">登录Baidu账号</button>
 </div>
 </body>
 <script type="text/javascript">
@@ -71,6 +71,24 @@ $(function(){
             pets: []
         },
         methods: {
+            login: function(){
+                layer.prompt({
+                    formType: 2,
+                    value: '',
+                    title: '请输入Baidu.com登录后的cookie',
+                    area: ['300px', '100px']
+                }, function(val, index){
+                    Config.cookie = val
+                    layer.close(index)
+                    F.writeCookie()
+                    F.user()
+                    F.gen()
+                })
+            },
+            logout: function(){
+                F.clearCookie()
+                App.user = {}
+            },
             sort_click: function(v){
                 if(v == this.sort_type){
                     this.sort_mode = this.sort_mode == 'ASC' ? 'DESC' : 'ASC'
@@ -113,6 +131,8 @@ $(function(){
         }
     })
 
+    Config = {}
+
     $.ajaxSetup({
         type: 'POST',
         dataType: 'json',
@@ -121,7 +141,7 @@ $(function(){
         async: true
     })
 
-    F.writeCookie()
+    // F.writeCookie()
 
     F.gen()
     F.get()
@@ -233,7 +253,15 @@ var F = {
     writeCookie: function(){
         var cookies = $.trim(Config.cookie).split(';')
         if(!cookies.length) return
-        for(var k in cookies) document.cookie = cookies[k]
+        for(var k in cookies)
+            document.cookie = cookies[k]
+    },
+    // 注销/清空cookie
+    clearCookie: function() {
+        var keys = document.cookie.match(/[^ =;]+(?=\=)/g)
+        if(!keys.length) return
+        for(var k in keys)
+            document.cookie = keys[k] + '=0;expires=' + new Date(0).toUTCString()
     },
     // 账户信息
     user: function(){
