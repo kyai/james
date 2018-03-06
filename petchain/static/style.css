@@ -1,0 +1,52 @@
+*{vertical-align: middle;}
+html,body{margin: 0;padding: 0;}
+a{text-decoration: none;}
+input{margin: 0;padding: 0;}
+#app{max-width: 1000px;margin: 0 auto;padding: 0 10px;position: relative;overflow: hidden;}
+.view{width: 500px;height: auto;float: left;}
+.ctrl{width: 260px;height: auto;float: left;margin-left: 20px;padding: 0 5px;background: #fff;border: solid 2px #aaa;}
+
+/*view*/
+
+.head{width: 100%;height: 40px;background: #fff;border-bottom: solid 2px #aaa;}
+.foot{width: 100%;text-align: center;line-height: 2;font-size: 12px;color: #ccc;}
+
+.menu{width: auto;height: 38px;display: block;padding: 0 10px;margin: 2px 0 0 0;float: left;line-height: 38px;text-align: center;color: #aaa;cursor: pointer;}
+.menu.active{color: red;border-bottom: solid 2px red;font-weight: bold;}
+
+.list{margin: 10px auto;}
+
+.sort .sortby{width: auto;height: 26px;display: inline-block;line-height: 26px;cursor: pointer;}
+.sort .sortby:after{width: 20px;height: 20px;display: block;content: '';
+    margin: 3px 0;float: right;
+    background-color: #fff;background-size: 20px 20px;background-repeat: no-repeat;
+}
+.sort .sortby.active.ASC:after{background-image: url(/static/sort_up.png);}
+.sort .sortby.active.DESC:after{background-image: url(/static/sort_down.png);}
+.sort button{background: #3385ff;color: #fff;border: 1px solid #2d78f4;}
+
+.list table{width: 100%;border-collapse: collapse;}
+.list table tr{border-bottom: solid 1px #ccc;}
+.list table tr:hover{background: #ccc}
+.list table td{text-align: center;line-height: 30px;}
+.list table td.l{text-align: left;}
+.list table td.r{text-align: right;}
+
+/*ctrl*/
+.ctrl>div{margin-bottom: 10px;}
+
+.code{border-bottom: dotted 1px #ccc;}
+.code img{width: 160px;height: auto;}
+.code input{width: 80px;height: 40px;}
+
+.user img{width: 60px;height: 60px;border-radius: 60px}
+.user>span{margin-left: 10px;display: inline-block;line-height: 30px;}
+
+
+.degree{display: inline-block;background: red;padding: 0 5px;line-height: 20px;color: #fff;font-size: 14px;}
+.degree_0{background-color: #bbbbbb}
+.degree_1{background-color: #ff6666}
+.degree_2{background-color: #339999}
+.degree_3{background-color: #cc4125}
+.degree_4{background-color: #e69138}
+.degree_5{background-color: red}
