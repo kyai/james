@@ -2,7 +2,8 @@
 html,body{margin: 0;padding: 0;}
 a{text-decoration: none;}
 input{margin: 0;padding: 0;}
-#app{max-width: 1000px;margin: 0 auto;padding: 0 10px;position: relative;overflow: hidden;}
+
+#app{width: auto;max-width: 800px;margin: 0 auto;padding: 0 10px;position: relative;}
 .view{width: 500px;height: auto;float: left;}
 .ctrl{width: 260px;height: auto;float: left;margin-left: 20px;padding: 0 5px;background: #fff;border: solid 2px #aaa;}
 
