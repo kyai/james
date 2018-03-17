@@ -12,14 +12,15 @@
 <body>
 <div id="app">
     <!-- 左侧列表 -->
-    <div class="view">
+    <div class="view wrap">
         <div class="head">
-            <span v-for="v in menu_list" :class="'menu ' + (v==menu?'active':'')" @click="menu_click(v)">{{v | menu}}</span>
+            <li v-for="v in menu_list" :class="'menu ' + (v==menu?'active':'')">
+                <a href="javascript:;" @click="menu_click(v)">{{v | menu}}</a>
+            </li>
         </div>
         <!-- market -->
         <div class="list" v-if="menu=='market'">
             <div class="sort">
-                <span>排序 - </span>
                 <span v-for="v in sort_name" :class="'sortby '+sort_mode+(v==sort_type?' active':'')" @click="sort_click(v)">{{v | sortname}}</span>
                 <span style="float: right;"><button @click="F.get()">刷新</button></span>
             </div>
@@ -29,7 +30,7 @@
                     <td>{{v.generation}} 代</td>
                     <td class="r">{{v.amount}} 微</td>
                     <td class="r">
-                        <a href="javascript:;">{{v.id}}</a>
+                        <!-- <a href="javascript:;">{{v.id}}</a> -->
                         <button @click="F.buy(v)">购买</button>
                     </td>
                 </tr>
@@ -62,7 +63,7 @@
         <div class="foot">莱茨狗 当前在售:{{sale}}<br>仅供交流学习使用，禁止用于商业用途。</div>
     </div>
     <!-- 右侧控制 -->
-    <div class="ctrl" v-if="user.userName">
+    <div class="ctrl wrap" v-if="user.userName">
         <div class="code">
             <img :src="'data:image/jpeg;base64,'+vimg" @click="F.gen()">
             <input v-model="vipt">
