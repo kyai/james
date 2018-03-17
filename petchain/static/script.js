@@ -15,7 +15,23 @@ $(function(){
             menu: 'market',
             // user
             user: {},
-            pets: []
+            pet_list: [],
+            order_list: []
+        },
+        watch: {
+            menu: function(v){
+                switch(v){
+                    case 'market':
+                        F.get()
+                        break
+                    case 'pet':
+                        F.pet()
+                        break
+                    case 'order':
+                        F.order()
+                        break
+                }
+            }
         },
         methods: {
             login: function(){
@@ -28,14 +44,17 @@ $(function(){
                 }, function(val, index){
                     Config.cookie = val
                     layer.close(index)
-                    F.writeCookie()
+                    Cookie.write()
                     F.user()
                     F.gen()
                 })
             },
             logout: function(){
-                F.clearCookie()
+                Cookie.clear()
                 App.user = {}
+            },
+            menu_click: function(v){
+                this.menu = v
             },
             sort_click: function(v){
                 if(v == this.sort_type){
@@ -60,6 +79,14 @@ $(function(){
                 return o[v] || ''
             },
             generation: function(v){},
+            // 订单状态
+            status: function(v){
+                var o = {
+                    '1': '已卖出',
+                    '2': '已买入'
+                }
+                return o[v] || ''
+            },
             menu: function(v){
                 var o = {
                     'market':   '集市',
@@ -80,16 +107,6 @@ $(function(){
     })
 
     Config = {}
-
-    $.ajaxSetup({
-        type: 'POST',
-        dataType: 'json',
-        contentType: 'application/json',
-        timeout : 5000,
-        async: true
-    })
-
-    // F.writeCookie()
 
     F.gen()
     F.get()
@@ -114,25 +131,13 @@ var F = {
             'token':            null
         }
 
-        $.ajax({
-            type: 'POST',
-            url: '/data/market/queryPetsOnSale',
-            contentType: 'application/json',
-            data: JSON.stringify(rdata),
-            dataType: 'json',
-            beforeSend:function(request){
-                // request.setRequestHeader("Authorization", token)
-                Load.start()
-            },
+        ajax('/data/market/queryPetsOnSale', rdata, {
             success: function (data) {
                 console.log(data)
                 if(data.errorNo != '00') return console.log('request error')
 
                 App.list = data.data.petsOnSale
                 App.sale = data.data.totalCount
-            },
-            complete: function(){
-                Load.close()
             }
         })
     },
@@ -147,15 +152,7 @@ var F = {
             'token':        null
         }
 
-        $.ajax({
-            type: 'POST',
-            url: '/data/captcha/gen',
-            contentType: 'application/json',
-            data: JSON.stringify(rdata),
-            dataType: 'json',
-            beforeSend:function(request){
-                // request.setRequestHeader("Authorization", token)
-            },
+        ajax('/data/captcha/gen', rdata, {
             success: function (data) {
                 console.log(data)
                 if(data.errorNo != '00') return console.log('request error')
@@ -182,15 +179,7 @@ var F = {
             'token':        null
         }
 
-        $.ajax({
-            type: 'POST',
-            url: '/data/txn/create',
-            contentType: 'application/json',
-            data: JSON.stringify(rdata),
-            dataType: 'json',
-            beforeSend:function(request){
-                // request.setRequestHeader("Authorization", token)
-            },
+        ajax('/data/txn/create', rdata, {
             success: function (data) {
                 console.log(data)
                 // if(data.errorNo != '00') return console.log('request error')
@@ -201,20 +190,7 @@ var F = {
             }
         })
     },
-    // 从配置写入cookie
-    writeCookie: function(){
-        var cookies = $.trim(Config.cookie).split(';')
-        if(!cookies.length) return
-        for(var k in cookies)
-            document.cookie = cookies[k]
-    },
-    // 注销/清空cookie
-    clearCookie: function() {
-        var keys = document.cookie.match(/[^ =;]+(?=\=)/g)
-        if(!keys.length) return
-        for(var k in keys)
-            document.cookie = keys[k] + '=0;expires=' + new Date(0).toUTCString()
-    },
+    
     // 账户信息
     user: function(){
         var rdata = {
@@ -226,10 +202,8 @@ var F = {
             'token':        null
         }
 
-        $.ajax({
-            url: '/data/user/get',
-            data: JSON.stringify(rdata),
-            success: function (data) {
+        ajax('/data/user/get', rdata, {
+            success: function(data){
                 console.log(data)
                 if(data.errorNo != '00') return console.log('request error')
 
@@ -237,15 +211,92 @@ var F = {
             }
         })
     },
-    // 我的狗狗
-    pets: function(){}
+    // 狗窝
+    pet: function(){
+        var rdata = {
+            'pageNo':       1,
+            'pageSize':     10,
+            'pageTotal':    -1,
+            'requestId':    new Date().getTime(),
+            'appId':        1,
+            'tpl':          '',
+            'timeStamp':    null,
+            'nounce':       null,
+            'token':        null
+        }
+
+        ajax('/data/user/pet/list', rdata, {
+            success: function(d){
+                console.log(d)
+                if(d.errorNo != '00') return console.log('request error')
+                App.pet_list = d.data.dataList
+            }
+        })
+    },
+    // 订单
+    order: function(){
+        var rdata = {
+            'pageNo':       1,
+            'pageSize':     10,
+            'pageTotal':    -1,
+            'requestId':    new Date().getTime(),
+            'appId':        1,
+            'tpl':          '',
+            'timeStamp':    null,
+            'nounce':       null,
+            'token':        null
+        }
+
+        ajax('/data/user/order/list', rdata, {
+            success: function(d){
+                console.log(d)
+                if(d.errorNo != '00') return console.log('request error')
+                App.order_list = d.data.dataList
+            }
+        })
+    }
+}
+
+var ajax = function(url, data, obj){
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        timeout : 5000,
+        async: true,
+        url: url,
+        data: JSON.stringify(data),
+        beforeSend: obj.before || function(){Load.start()},
+        complete: obj.complete || function(){Load.close()},
+        success: obj.success || function(){},
+        error: obj.error || function(){}
+    })
+}
+
+var Cookie = {
+    // 从配置写入cookie
+    write: function(){
+        var cookies = $.trim(Config.cookie).split(';')
+        if(!cookies.length) return
+        for(var k in cookies)
+            document.cookie = cookies[k]
+    },
+    // 注销/清空cookie
+    clear: function() {
+        var keys = document.cookie.match(/[^ =;]+(?=\=)/g)
+        if(!keys.length) return
+        for(var k in keys)
+            document.cookie = keys[k] + '=0;expires=' + new Date(0).toUTCString()
+    }
 }
 
 var Load = {
     start: function(){
-        layer.load(0,{shade:0.3})
+        if(window.LL) return
+        window.LL = layer.load(0,{shade:0.3})
     },
     close: function(){
-        layer.closeAll('loading')
+        layer.close(window.LL)
+        window.LL = 0
     }
 }
