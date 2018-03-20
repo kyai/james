@@ -14,34 +14,28 @@ input{margin: 0;padding: 0;}
 .head{width: 100%;height: 60px;background: #f5f5f6;}
 .foot{width: 100%;text-align: center;line-height: 2;font-size: 12px;color: #ccc;}
 
-.menu{width: auto;height: 60px;display: block;float: left;line-height: 58px;text-align: center;cursor: pointer;}
-.menu.active{}
-.menu:after{content: "|";color: #EBECEC;}
-.menu:last-child:after{content: ""}
-.menu a{display: inline-block;margin: 0 10px;padding: 0 10px;border-bottom: solid 2px transparent;color: #666;font-size: 18px;}
-.menu.active a{border-bottom: solid 2px #00C1DE;color: #00C1DE;}
-
+.menu{}
 .list{margin: 10px auto;padding: 0 10px;}
 
-.sort .sortby{width: auto;height: 26px;display: inline-block;line-height: 26px;cursor: pointer;color: #666;}
-.sort .sortby:after{width: 20px;height: 20px;display: block;content: '';
-    margin: 3px 0;float: right;
-    background-color: #fff;background-size: 20px 20px;background-repeat: no-repeat;
-}
-.sort .sortby.active{color: #000}
-.sort .sortby.active.ASC:after{background-image: url(/static/sort_up.png);}
-.sort .sortby.active.DESC:after{background-image: url(/static/sort_down.png);}
-.sort button{background: #3385ff;color: #fff;border: 1px solid #2d78f4;}
+.sort{margin: 0 0 10px 0}
+.sort .sortby{width: auto;height: 26px;display: inline-block;margin-right: 10px;line-height: 26px;cursor: pointer;color: #666;}
+.sort .sortby:after{width: 20px;height: auto;display: block;content: '';float: right;text-align: center;font-size: 14px;}
+.sort .sortby.active{color: #000;font-weight: bold;}
+.sort .sortby.active.ASC:after{content: '\e619'}
+.sort .sortby.active.DESC:after{content: '\e61a'}
+
+.list button{width: 48px}
 
 .list table{width: 100%;border-collapse: collapse;}
-.list table tr{border-bottom: solid 1px #f1f1f1;}
+.list table tr{height: 38px;border-bottom: solid 1px #f1f1f1;}
 .list table tr:hover{background: #f1f1f1}
+.list table tr:hover button{border-color: #009688;}
 .list table td{text-align: center;line-height: 30px;}
 .list table td.l{text-align: left;}
 .list table td.r{text-align: right;}
 
 /*ctrl*/
-.ctrl>div{padding: 20px 0;border-bottom: solid 1px #eaedf1;}
+.ctrl>div{padding: 20px 0;border-bottom: solid 1px #eaedf1;position: relative;}
 .ctrl>div:first-child{padding: 0}
 .ctrl>div:last-child{border-bottom: 0}
 
@@ -51,10 +45,8 @@ input{margin: 0;padding: 0;}
 .user img{width: 60px;height: 60px;border-radius: 60px}
 .user>span{margin-left: 10px;display: inline-block;line-height: 30px;}
 
-.rush .term span{display: inline-block;width: 60px;}
-.rush .term-price input{width: 80px;line-height: 30px;}
+.rush .title{width: auto;height: 24px;position: absolute;top: 7.5px;left: 5px;padding: 0 5px;line-height: 24px;background: #fff;color: #5FB878}
 
-.rush button{}
 
 .degree{display: inline-block;background: red;padding: 0 5px;line-height: 20px;color: #fff;font-size: 14px;}
 .degree_0{background-color: #bbbbbb}
@@ -71,3 +63,18 @@ input{margin: 0;padding: 0;}
     -webkit-transition: background .3s;
     -o-transition: background .3s;
 }
+
+
+/*layui*/
+.layui-btn .layui-icon{margin-right: 0}
+
+.rush .layui-form{border: solid 1px #5FB878;padding: 20px 10px 10px 10px;}
+.rush .layui-form-label{width: 60px;padding-left: 0;}
+/*.rush .layui-form-checkbox{float: left;}*/
+.rush .layui-input{width: auto;}
+
+.rush .term-rare .layui-form-checkbox{margin-right: 4px;padding-right: 0}
+.rush .term-rare .layui-form-checkbox span{}
+.rush .term-rare .layui-form-checkbox i{display: none;}
+.rush .term-rare .layui-form-checkbox:nth-child(3n){margin-right: 0}
+.rush .layui-btn{width: 100%}

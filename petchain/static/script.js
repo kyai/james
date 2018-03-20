@@ -16,7 +16,10 @@ $(function(){
             // user
             user: {},
             pet_list: [],
-            order_list: []
+            order_list: [],
+            // rush
+            rushing: false,
+            rush_time: 0
         },
         watch: {
             menu: function(v){
@@ -106,11 +109,19 @@ $(function(){
         }
     })
 
-    Config = {}
+    layui.use(['layer', 'form', 'element'], function(){
+        layer = layui.layer
+        form = layui.form
+        // element = layui.element
 
-    F.gen()
-    F.get()
-    F.user()
+        // form.render()
+
+        F.gen()
+        F.get()
+        F.user()
+    })
+
+    Config = {}
 })
 
 var F = {
@@ -254,6 +265,46 @@ var F = {
                 App.order_list = d.data.dataList
             }
         })
+    }
+}
+
+var Rush = {
+    start: function(){
+        window.timer_rush = setTimeout(function(){
+            var rdata = {
+                'pageNo':           1,
+                'pageSize':         1,
+                'querySortType':    App.sort_type + '_' + App.sort_mode,
+                'petIds':           [],
+                'lastAmount':       null,
+                'lastRareDegree':   null,
+                'requestId':        new Date().getTime(),
+                'appId':            1,
+                'tpl':              '',
+                'timeStamp':        null,
+                'nounce':           null,
+                'token':            null
+            }
+
+            ajax('/data/market/queryPetsOnSale', rdata, {
+                before: function(){
+                    App.rushing = true
+                },
+                success: function (data) {
+                    console.log(data)
+                    if(data.errorNo != '00') return console.log('request error')
+                },
+                complete: function(){
+                    App.rush_time++
+                    Rush.start()
+                }
+            })
+        },1000)
+    },
+    stop: function(){
+        clearTimeout(window.timer_rush)
+        App.rushing = false
+        App.rush_time = 0
     }
 }
 

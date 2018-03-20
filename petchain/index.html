@@ -5,8 +5,9 @@
 <title>莱茨助手</title>
 <script type="text/javascript" src="static/jquery.min.js"></script>
 <script type="text/javascript" src="static/vue.min.js"></script>
-<script type="text/javascript" src="static/layer.js"></script>
+<script type="text/javascript" src="static/layui/layui.js"></script>
 <script type="text/javascript" src="static/script.js"></script>
+<link rel="stylesheet" type="text/css" href="static/layui/css/layui.css">
 <link rel="stylesheet" type="text/css" href="static/style.css">
 </head>
 <body>
@@ -14,15 +15,17 @@
     <!-- 左侧列表 -->
     <div class="view wrap">
         <div class="head">
-            <li v-for="v in menu_list" :class="'menu ' + (v==menu?'active':'')">
-                <a href="javascript:;" @click="menu_click(v)">{{v | menu}}</a>
-            </li>
+            <ul class="layui-nav" lay-filter="">
+                <li v-for="v in menu_list" :class="'layui-nav-item ' + (v==menu?'layui-this':'')">
+                    <a href="javascript:;" @click="menu_click(v)">{{v | menu}}</a>
+                </li>
+            </ul>
         </div>
         <!-- market -->
         <div class="list" v-if="menu=='market'">
             <div class="sort">
-                <span v-for="v in sort_name" :class="'sortby '+sort_mode+(v==sort_type?' active':'')" @click="sort_click(v)">{{v | sortname}}</span>
-                <span style="float: right;"><button @click="F.get()">刷新</button></span>
+                <span v-for="v in sort_name" :class="'sortby layui-icon '+sort_mode+(v==sort_type?' active':'')" @click="sort_click(v)">{{v | sortname}}</span>
+                <span style="float: right;"><button class="layui-btn layui-btn-sm" @click="F.get()"><i class="layui-icon">&#x1002;</i></button></span>
             </div>
             <table cellpadding="0" cellspacing="0" border="0">
                 <tr v-for="v in list">
@@ -31,7 +34,7 @@
                     <td class="r">{{v.amount}} 微</td>
                     <td class="r">
                         <!-- <a href="javascript:;">{{v.id}}</a> -->
-                        <button @click="F.buy(v)">购买</button>
+                        <button class="layui-btn layui-btn-primary layui-btn-sm" @click="F.buy(v)"><i class="layui-icon">&#xe698;</i></button>
                     </td>
                 </tr>
             </table>
@@ -63,7 +66,7 @@
         <div class="foot">莱茨狗 当前在售:{{sale}}<br>仅供交流学习使用，禁止用于商业用途。</div>
     </div>
     <!-- 右侧控制 -->
-    <div class="ctrl wrap" v-if="user.userName">
+    <div class="ctrl wrap" v-show="user.userName">
         <div class="code">
             <img :src="'data:image/jpeg;base64,'+vimg" @click="F.gen()">
             <input v-model="vipt">
@@ -75,8 +78,27 @@
                 <a href="javascript:;" @click="logout()">退出</a>
             </span>
         </div>
+        <div class="rush">
+            <div class="layui-form">
+                <div class="title">自动购买</div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">价格</label>
+                    <input type="text" name="" required  lay-verify="required" placeholder="请输入最大价格" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">稀有度</label>
+                    <div class="term-rare">
+                        <input v-for="n in 6" type="checkbox" :title="n-1 | raredegree" :checked="n==1">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <button v-if="!rushing" class="layui-btn" @click="Rush.start()">开始搜索</button>
+                    <button v-else class="layui-btn layui-btn-primary" @click="Rush.stop()">已搜索{{rush_time}}次，点击停止</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <button v-else @click="login()">登录Baidu账号</button>
+    <button class="layui-btn" v-show="!user.userName" style="margin: 20px" @click="login()">登录Baidu账号</button>
 </div>
 </body>
 </html>
