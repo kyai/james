@@ -86,7 +86,8 @@ $(function(){
             status: function(v){
                 var o = {
                     '1': '已卖出',
-                    '2': '已买入'
+                    '2': '已买入',
+                    '4': '繁育支出'
                 }
                 return o[v] || ''
             },
@@ -129,14 +130,16 @@ var F = {
     get: function(){
         var rdata = {
             'pageNo':           1,
-            'pageSize':         20,
+            'pageSize':         10,
             'querySortType':    App.sort_type + '_' + App.sort_mode,
             'petIds':           [],
-            'lastAmount':       null,
-            'lastRareDegree':   null,
-            'requestId':        new Date().getTime(),
+            'lastAmount':       '',
+            'lastRareDegree':   '',
+            'filterCondition':  '{}',
             'appId':            1,
             'tpl':              '',
+            'type':             null,
+            'requestId':        new Date().getTime(),
             'timeStamp':        null,
             'nounce':           null,
             'token':            null

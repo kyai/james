@@ -34,6 +34,10 @@ input{margin: 0;padding: 0;}
 .list table td.l{text-align: left;}
 .list table td.r{text-align: right;}
 
+.list.order table tr{height: 50px;}
+.list.order .amount{height: 30px;display: block;line-height: 30px}
+.list.order .fee{height: 20px;display: block;line-height: 20px;font-size: 12px;color: #666}
+
 /*ctrl*/
 .ctrl>div{padding: 20px 0;border-bottom: solid 1px #eaedf1;position: relative;}
 .ctrl>div:first-child{padding: 0}
@@ -48,13 +52,14 @@ input{margin: 0;padding: 0;}
 .rush .title{width: auto;height: 24px;position: absolute;top: 7.5px;left: 5px;padding: 0 5px;line-height: 24px;background: #fff;color: #5FB878}
 
 
-.degree{display: inline-block;background: red;padding: 0 5px;line-height: 20px;color: #fff;font-size: 14px;}
+.degree,.genera{display: inline-block;background: #fff;padding: 0 5px;line-height: 20px;color: #fff;font-size: 14px;border-radius: 2px;}
 .degree_0{background-color: #bbbbbb}
 .degree_1{background-color: #ff6666}
 .degree_2{background-color: #339999}
 .degree_3{background-color: #cc4125}
 .degree_4{background-color: #e69138}
 .degree_5{background-color: red}
+.genera{background: #D3931A}
 
 .list table tr
 {

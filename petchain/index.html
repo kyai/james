@@ -29,10 +29,10 @@
             </div>
             <table cellpadding="0" cellspacing="0" border="0">
                 <tr v-for="v in list">
-                    <td class="l"><span :class="'degree degree_'+v.rareDegree">{{v.rareDegree | raredegree}}</span></td>
-                    <td>{{v.generation}} 代</td>
+                    <td width="80" class="l"><span :class="'degree degree_'+v.rareDegree">{{v.rareDegree | raredegree}}</span></td>
+                    <td width="80"><span class="genera">{{v.generation}} 代</span></td>
                     <td class="r">{{v.amount}} 微</td>
-                    <td class="r">
+                    <td width="100" class="r">
                         <!-- <a href="javascript:;">{{v.id}}</a> -->
                         <button class="layui-btn layui-btn-primary layui-btn-sm" @click="F.buy(v)"><i class="layui-icon">&#xe698;</i></button>
                     </td>
@@ -43,22 +43,22 @@
         <div class="list" v-if="menu=='pet'">
             <table cellpadding="0" cellspacing="0" border="0">
                 <tr v-for="v in pet_list">
-                    <td class="l"><span :class="'degree degree_'+v.rareDegree">{{v.rareDegree | raredegree}}</span></td>
-                    <td>{{v.generation}} 代</td>
+                    <td width="80" class="l"><span :class="'degree degree_'+v.rareDegree">{{v.rareDegree | raredegree}}</span></td>
+                    <td width="80"><span class="genera">{{v.generation}} 代</span></td>
                     <td class="r">{{v.petName}}</td>
                     <td class="r">{{v.chainStatus}}</td>
                 </tr>
             </table>
         </div>
         <!-- order -->
-        <div class="list" v-if="menu=='order'">
+        <div class="list order" v-if="menu=='order'">
             <table cellpadding="0" cellspacing="0" border="0">
                 <tr v-for="v in order_list">
                     <td>{{v.status | status}}</td>
                     <td>{{v.transDate}}</td>
                     <td>
-                        <span>{{v.status==1?'+':'-'}}{{v.amount}}</span>
-                        <template v-if="v.status==2"><br><span>含手续费{{v.fee}}</span></template>
+                        <span class="amount">{{v.status==1?'+':'-'}}{{v.amount}}</span>
+                        <span class="fee" v-if="v.status!=1">含手续费{{v.fee}}</span>
                     </td>
                 </tr>
             </table>
